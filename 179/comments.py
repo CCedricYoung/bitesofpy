@@ -38,28 +38,7 @@ inputs = [
 ]
 
 def strip_comments(code):
-    result = []
-    is_docstring = False
-    for line in code.splitlines():
-        doc_parts = len(line.split('"""'))
-        if doc_parts == 3:
-            continue
-
-        if doc_parts == 2:
-            is_docstring = not is_docstring
-            continue
-
-        if is_docstring:
-            continue
-
-        # remove whole line comment
-        if re.match(r'^\s*#.*$', line):
-            continue
-
-        result.append(re.sub(r'  #.*$', '', line))
-
-    print('\n'.join(result))
-    return '\n'.join(result)
+    return re.sub(r'(\n\s*# .*|  #.*|\n\s*"""(.|\n)*?""")\n', '\n', code, re.MULTILINE)
 
 for line in inputs:
-    strip_comments(line)
+    print(strip_comments(line))
