@@ -8,6 +8,15 @@ def make_changes(n: int, coins: List[int]) -> int:
           coins - the coin denominations
     Output: how many ways to make this changes
     """
+    # # Given solution using dynamic programming
+    # coins.sort()
+    # ways = [1] + [0] * n
+
+    # for coin in coins:
+    #     for i in range(coin, n + 1):
+    #         ways[i] += ways[i - coin]
+
+    # return ways[n]
 
     val_to_coin = {y: x for x, y in enumerate(coins)}
     queue = deque([(0, [0] * len(coins))])
