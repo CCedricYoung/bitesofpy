@@ -24,17 +24,16 @@ def calc_max_uptime(reboots):
        For the output above it would be (30, '2019-02-17'),
        but we use different outputs in the tests as well ...
     """        
-    dates = [
-        parse(line.split("~")[1].strip())
-        for line
-        in reboots.strip().split("\n")
-    ]
-    dates.sort()
 
-    uptimes = []
-    for x in range(1, len(dates)):
-        duration = (dates[x] - dates[x-1])
-        uptimes.append((duration.total_seconds(), duration.days, dates[x].strftime("%Y-%m-%d")))
+    dates = sorted([
+        parse(x.split("~")[1].strip())
+        for x
+        in reboots.strip().splitlines()
+    ])
 
-    uptimes.sort(key=lambda x: x[0], reverse=True)
-    return (uptimes[0][1], uptimes[0][2])
+    uptimes = {}
+    for x, y in zip(dates, dates[1:]):
+        uptimes[y - x] = y
+        max_uptime = max(uptimes)
+
+    return (max_uptime.days, str(uptimes[max_uptime].date()))
