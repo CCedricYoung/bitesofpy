@@ -24,12 +24,10 @@ def strip_range(start, end):
     def wrapper_decorator(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
+            indexes = range(start, end)
             result = f(*args, **kwargs)
-            x = list(range(max(start, 0), min(end, len(result))))
-            if len(x) == 0:
-                return result
 
-            return result[: x[0]] + DOT * len(x) + result[x[-1] + 1 :]
+            return "".join([x in indexes and DOT or y for x, y in enumerate(result)])
 
         return wrapper
 
