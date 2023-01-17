@@ -1,5 +1,5 @@
 import re
-from random import randint, shuffle
+from random import choice, randint
 
 import requests
 from bs4 import BeautifulSoup
@@ -23,33 +23,16 @@ def wiki_lorem_ipsum(article: str = CONTENT, number_of_sentences: int = 5):
     if number_of_sentences < 1:
         raise ValueError()
 
-    soup = BeautifulSoup(CONTENT, "html.parser")
-    article = (
-        soup.find("div", class_="mw-parser-output").find("p").get_text(" ", strip=True)
-    )
+    soup = BeautifulSoup(article, "html.parser")
+    feature_article = soup.select_one(".mw-parser-output p").get_text(" ", strip=True)
 
     words = list(
-        {x.lower().replace("-", "") for x in re.findall("[A-Za-z-]+", article)}
+        {x.lower().replace("-", "") for x in re.findall("[A-Za-z-]+", feature_article)}
     )
 
-    min_num = min(5, len(words))
-    max_num = min(16, len(words))
-    shuffle(words)
-    ix = 0
-    sentences = []
-    for _ in range(number_of_sentences):
-        length = randint(min_num, max_num - 1)
-        if ix + length <= len(words) - 1:
-            sentences.append(" ".join(words[ix : ix + length]).capitalize() + ".")
-            ix += length
-        else:
-            line = words[ix:]
-            shuffle(words)
-            line += words[: length - len(line)]
-            ix = 0
-            sentences.append(" ".join(line).capitalize() + ".")
+    sentences = [
+        " ".join([choice(words) for _ in range(randint(5, 15))]).capitalize() + "."
+        for _ in range(number_of_sentences)
+    ]
 
     return " ".join(sentences)
-
-
-# wiki_lorem_ipsum(number_of_sentences=5)
